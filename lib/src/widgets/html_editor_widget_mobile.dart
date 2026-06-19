@@ -131,6 +131,10 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
               Expanded(
                 child: InAppWebView(
                   initialFile: filePath,
+                    onReceivedServerTrustAuthRequest: (controller, challenge) async {
+                    return ServerTrustAuthResponse(
+                        action: ServerTrustAuthResponseAction.PROCEED);
+                  },
                   onWebViewCreated: (InAppWebViewController controller) {
                     widget.controller.editorController = controller;
                     controller.addJavaScriptHandler(
@@ -143,17 +147,28 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                           }
                         });
                   },
-                  initialOptions: InAppWebViewGroupOptions(
-                      crossPlatform: InAppWebViewOptions(
-                        javaScriptEnabled: true,
-                        transparentBackground: true,
-                        useShouldOverrideUrlLoading: true,
-                      ),
-                      android: AndroidInAppWebViewOptions(
-                        useHybridComposition: widget
-                            .htmlEditorOptions.androidUseHybridComposition,
-                        loadWithOverviewMode: true,
-                      )),
+                  // initialOptions: InAppWebViewGroupOptions(
+                  //     crossPlatform: InAppWebViewOptions(
+                  //       javaScriptEnabled: true,
+                  //       transparentBackground: true,
+                  //       useShouldOverrideUrlLoading: true,
+                  //     ),
+                  //     android: AndroidInAppWebViewOptions(
+                  //       useHybridComposition: widget
+                  //           .htmlEditorOptions.androidUseHybridComposition,
+                  //       loadWithOverviewMode: true,
+                  //     )),
+                initialSettings: InAppWebViewSettings(
+                    javaScriptEnabled: true,
+                    transparentBackground: true,
+                    useShouldOverrideUrlLoading: true,
+                    useHybridComposition: widget
+                        .htmlEditorOptions.androidUseHybridComposition,
+                    loadWithOverviewMode: true,
+                    mixedContentMode: MixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
+                    allowFileAccessFromFileURLs: true,
+                    allowUniversalAccessFromFileURLs: true,
+                  ),
                   initialUserScripts:
                       widget.htmlEditorOptions.mobileInitialScripts
                           as UnmodifiableListView<UserScript>?,
